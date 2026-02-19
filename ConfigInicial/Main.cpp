@@ -1,3 +1,6 @@
+//Practica 1                                   Perez Rivas Evelyn Samantha
+//Fecha: 2026-02-14                            320258187
+
 #include<iostream>
 
 //#define GLEW_STATIC
@@ -84,9 +87,16 @@ int main() {
 	// Set up vertex data (and buffer(s)) and attribute pointers
 	GLfloat vertices[] =
 	{
-		-0.5f, -0.5f, 0.0f, // Left
-		0.5f, -0.5f, 0.0f, // Right
-		0.0f,  0.5f, 0.0f  // Top
+		//ala superior izquierda 
+		-0.63f, 0.14f, 0.0f, // Left
+		-0.68f, 0.28f, 0.0f, // Right
+		-0.74f, 0.25f, 0.0f  // Top
+		-0.69f, 0.44f, 0.0f 
+		-0.40f, 0.4f, 0.0f 
+		-0.48f, 0.16f, 0.0f 
+		-0.58f, -0.11f 0.0f 
+		-0.35f, -0.08f, 0.0f
+		-0.06f, 0.12f, 0.0f 
 	};
 
 
@@ -126,7 +136,7 @@ int main() {
 		// Draw our first triangle
 
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 9);
 		glBindVertexArray(0);
 
 		// Swap the screen buffers
