@@ -1,3 +1,5 @@
+//Previo 3                                         Perez Rivas Evelyn Samantha
+//Fecha de entrega : 21/02/2026                    320258187
 #include<iostream>
 
 //#define GLEW_STATIC
