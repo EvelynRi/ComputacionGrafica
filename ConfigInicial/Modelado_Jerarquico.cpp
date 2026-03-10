@@ -1,0 +1,275 @@
+//Previo 5                                      Perez Rivas Evelyn Samantha
+//Fecha de entrega : 10/03/2026                 320258187
+
+#include<iostream>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+// Shaders
+#include "Shader.h"
+
+void Inputs(GLFWwindow* window);
+
+const GLint WIDTH = 1200, HEIGHT = 800;
+
+//For Keyboard
+float movX = 0.0f,
+movY = 0.0f,
+movZ = -5.0f,
+rot = 0.0f;
+
+//For model
+float hombro = 0.0f,
+codo = 0.0f,
+muneca = 0.0f,
+dedo1 = 0.0f,
+dedo2 = 0.0f;
+
+int main() {
+
+    glfwInit();
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT,
+        "Modelado jerarquico Perez Rivas Evelyn Samantha",
+        nullptr, nullptr);
+
+    int screenWidth, screenHeight;
+    glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
+
+    if (window == nullptr)
+    {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return EXIT_FAILURE;
+    }
+
+    glfwMakeContextCurrent(window);
+    glewExperimental = GL_TRUE;
+
+    if (glewInit() != GLEW_OK)
+    {
+        std::cout << "Failed to initialise GLEW" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    glViewport(0, 0, screenWidth, screenHeight);
+
+    glEnable(GL_DEPTH_TEST);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    Shader ourShader("Shader/core.vs", "Shader/core.frag");
+
+    float vertices[] = {
+
+        -0.5f,-0.5f,0.5f,
+         0.5f,-0.5f,0.5f,
+         0.5f,0.5f,0.5f,
+         0.5f,0.5f,0.5f,
+        -0.5f,0.5f,0.5f,
+        -0.5f,-0.5f,0.5f,
+
+        -0.5f,-0.5f,-0.5f,
+         0.5f,-0.5f,-0.5f,
+         0.5f,0.5f,-0.5f,
+         0.5f,0.5f,-0.5f,
+        -0.5f,0.5f,-0.5f,
+        -0.5f,-0.5f,-0.5f,
+
+         0.5f,-0.5f,0.5f,
+         0.5f,-0.5f,-0.5f,
+         0.5f,0.5f,-0.5f,
+         0.5f,0.5f,-0.5f,
+         0.5f,0.5f,0.5f,
+         0.5f,-0.5f,0.5f,
+
+        -0.5f,0.5f,0.5f,
+        -0.5f,0.5f,-0.5f,
+        -0.5f,-0.5f,-0.5f,
+        -0.5f,-0.5f,-0.5f,
+        -0.5f,-0.5f,0.5f,
+        -0.5f,0.5f,0.5f,
+
+        -0.5f,-0.5f,-0.5f,
+         0.5f,-0.5f,-0.5f,
+         0.5f,-0.5f,0.5f,
+         0.5f,-0.5f,0.5f,
+        -0.5f,-0.5f,0.5f,
+        -0.5f,-0.5f,-0.5f,
+
+        -0.5f,0.5f,-0.5f,
+         0.5f,0.5f,-0.5f,
+         0.5f,0.5f,0.5f,
+         0.5f,0.5f,0.5f,
+        -0.5f,0.5f,0.5f,
+        -0.5f,0.5f,-0.5f
+    };
+
+    GLuint VBO, VAO;
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    glm::mat4 projection = glm::perspective(
+        glm::radians(45.0f),
+        (GLfloat)screenWidth / (GLfloat)screenHeight,
+        0.1f,
+        100.0f
+    );
+
+    glm::vec3 color;
+
+    while (!glfwWindowShouldClose(window))
+    {
+
+        Inputs(window);
+        glfwPollEvents();
+
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        ourShader.Use();
+
+        glm::mat4 model = glm::mat4(1);
+        glm::mat4 view = glm::mat4(1);
+        glm::mat4 modelTemp = glm::mat4(1);
+        glm::mat4 modelTemp2 = glm::mat4(1);
+
+        view = glm::translate(view, glm::vec3(movX, movY, movZ));
+        view = glm::rotate(view, glm::radians(rot), glm::vec3(0, 1, 0));
+
+        GLint modelLoc = glGetUniformLocation(ourShader.Program, "model");
+        GLint viewLoc = glGetUniformLocation(ourShader.Program, "view");
+        GLint projLoc = glGetUniformLocation(ourShader.Program, "projection");
+        GLint uniformColor = ourShader.uniformColor;
+
+        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+        glBindVertexArray(VAO);
+
+        // BICEP
+        model = glm::rotate(model, glm::radians(hombro), glm::vec3(0, 0, 1));
+        model = glm::translate(model, glm::vec3(1.5f, 0, 0));
+        modelTemp = model;
+        glm::mat4 bicep = glm::scale(model, glm::vec3(3, 1, 1));
+        color = glm::vec3(0, 1, 0);
+        glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(bicep));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        // ANTEBRAZO
+        model = glm::translate(modelTemp, glm::vec3(1.5f, 0, 0));
+        model = glm::rotate(model, glm::radians(codo), glm::vec3(0, 1, 0));
+        model = glm::translate(model, glm::vec3(1.0f, 0, 0));
+        modelTemp = model;
+        glm::mat4 antebrazo = glm::scale(model, glm::vec3(2, 1, 1));
+        color = glm::vec3(1, 0, 0);
+        glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(antebrazo));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //  PALMA 
+        model = glm::translate(modelTemp, glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(muneca), glm::vec3(0.0f, 1.0f, 0.0f));
+        modelTemp2 = model;
+        glm::mat4 palma = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+        color = glm::vec3(0.8f, 0.8f, 0.8f);
+        glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(palma));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+        // DEDO 1 
+        model = glm::translate(modelTemp2, glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(dedo1), glm::vec3(0.0f, 0.0f, 1.0f));
+        modelTemp = model;
+        glm::mat4 dedoA = glm::scale(model, glm::vec3(0.8f, 0.4f, 0.4f));
+        color = glm::vec3(0.0f, 1.0f, 1.0f);
+        glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(dedoA));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+        // DEDO 2 
+        model = glm::translate(modelTemp, glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(dedo2), glm::vec3(0.0f, 0.0f, 1.0f));
+        glm::mat4 dedoB = glm::scale(model, glm::vec3(0.8f, 0.4f, 0.4f));
+        color = glm::vec3(1.0f, 0.0f, 1.0f);
+        glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(dedoB));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
+
+        glfwSwapBuffers(window);
+    }
+
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+
+    glfwTerminate();
+    return EXIT_SUCCESS;
+}
+
+void Inputs(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) 
+        movX += 0.02f;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        movX -= 0.02f;
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) 
+        movY += 0.02f;
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        movY -= 0.02f;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
+        movZ -= 0.02f;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) 
+        movZ += 0.02f;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) 
+        rot += 0.18f;
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) 
+        rot -= 0.18f;
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) 
+        hombro += 0.18f;
+    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) 
+        hombro -= 0.18f;
+    if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) 
+        codo += 0.18f;
+    if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) 
+        codo -= 0.18f;
+    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) 
+        muneca += 0.18f;
+    if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) 
+        muneca -= 0.18f;
+    if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) 
+        dedo1 += 0.18f;
+    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
+        dedo1 -= 0.18f;
+    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+        dedo2 += 0.18f;
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) 
+        dedo2 -= 0.18f;
+}
