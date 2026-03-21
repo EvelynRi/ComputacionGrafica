@@ -1,8 +1,8 @@
-//Previo 6                                        Perez Rivas Evelyn Samantha
-//Fecha de entrega : 15/03/2026                   320258187
+//Practica 6                                      Perez Rivas Evelyn Samantha
+//Fecha de entrega : 20/03/2026                   320258187
 
 
-/ Std. Includes
+// Std. Includes
 #include <string>
 
 // GLEW
@@ -99,8 +99,11 @@ int main( )
     
     // Load models
 	Model dog((char*)"Models/RedDog.obj"); 
-    glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
-    
+	Model parque((char*)"Models/Moduloparque.obj");
+ //   Model pelota((char*)"Models/pelota.obj");
+
+
+    glm::mat4 projection = glm::perspective(camera.GetZoom(), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
   
 
     // Game loop
@@ -125,15 +128,17 @@ int main( )
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
-        // Draw the loaded model
-        glm::mat4 model(1);
-        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		dog.Draw(shader);
+        glm::mat4 modelParque = glm::mat4(1.0f);
+        modelParque = glm::translate(modelParque, glm::vec3(0.0f, 0.0f, 0.0f));
+        modelParque = glm::scale(modelParque, glm::vec3(3.0f, 3.0f, 3.0f)); 
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelParque));
+        parque.Draw(shader);
 
-		model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		dog.Draw(shader);
+        glm::mat4 modelDog = glm::mat4(1.0f);
+        modelDog = glm::translate(modelDog, glm::vec3(-9.0f, 8.0f, 6.0f));
+        modelDog = glm::scale(modelDog, glm::vec3(6.0f, 6.0f, 6.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelDog));
+        dog.Draw(shader);
 
         // Swap the buffers
         glfwSwapBuffers( window );
