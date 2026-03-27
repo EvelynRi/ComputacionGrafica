@@ -1,4 +1,4 @@
-//Previo 7                                   Perez Rivas Evelyn Samantha
+//Practica 7                                   Perez Rivas Evelyn Samantha
 //Fecha de entrega: 22/03/2026               320258187
 #include <iostream>
 #include <cmath>
@@ -101,20 +101,46 @@ int main()
 	// Set up vertex data (and buffer(s)) and attribute pointers
 	GLfloat vertices[] =
 	{
-		// Positions            // Colors              // Texture Coords
-		-0.5f, -0.5f, 0.0f,    1.0f, 1.0f,1.0f,		0.0f,0.0f,
-		0.5f, -0.5f, 0.0f,	   1.0f, 1.0f,1.0f,		1.0f,0.0f,
-		0.5f,  0.5f, 0.0f,     1.0f, 1.0f,1.0f,	    1.0f,1.0f,
-		-0.5f,  0.5f, 0.0f,    1.0f, 1.0f,1.0f,		0.0f,1.0f,
 
-		
+		-0.5f, -0.5f,  0.5f,         1.0f, 1.0f, 1.0f,      0.51f, 0.27f, // Punto I
+		 0.5f, -0.5f,  0.5f,         1.0f, 1.0f, 1.0f,      0.74f, 0.27f, // Punto J
+		 0.5f,  0.5f,  0.5f,         1.0f, 1.0f, 1.0f,      0.74f, 0.49f, // Punto G
+		-0.5f,  0.5f,  0.5f,         1.0f, 1.0f, 1.0f,      0.51f, 0.49f, // Punto H
+
+		 0.5f, -0.5f, -0.5f,         1.0f, 1.0f, 1.0f,      0.01f, 0.27f, // Punto A1 
+		-0.5f, -0.5f, -0.5f,         1.0f, 1.0f, 1.0f,      0.24f, 0.27f, // Punto B1
+		-0.5f,  0.5f, -0.5f,         1.0f, 1.0f, 1.0f,      0.24f, 0.49f, // Punto Z
+		 0.5f,  0.5f, -0.5f,         1.0f, 1.0f, 1.0f,      0.01f, 0.49f, // Punto W
+
+		  0.5f, -0.5f,  0.5f,         1.0f, 1.0f, 1.0f,      0.76f, 0.27f, // Punto V
+		  0.5f, -0.5f, -0.5f,         1.0f, 1.0f, 1.0f,      0.99f, 0.27f, // Punto U
+		  0.5f,  0.5f, -0.5f,         1.0f, 1.0f, 1.0f,      0.99f, 0.49f, // Punto T
+		  0.5f,  0.5f,  0.5f,         1.0f, 1.0f, 1.0f,      0.76f, 0.49f, // Punto S
+
+		  -0.5f, -0.5f, -0.5f,         1.0f, 1.0f, 1.0f,      0.26f, 0.27f, // Punto M
+		  -0.5f, -0.5f,  0.5f,         1.0f, 1.0f, 1.0f,      0.49f, 0.27f, // Punto N
+		  -0.5f,  0.5f,  0.5f,         1.0f, 1.0f, 1.0f,      0.48f, 0.49f, // Punto L
+		  -0.5f,  0.5f, -0.5f,         1.0f, 1.0f, 1.0f,      0.26f, 0.49f, // Punto K
+
+		  -0.5f, -0.5f, -0.5f,         1.0f, 1.0f, 1.0f,      0.51f, 0.01f, // Punto Q
+		   0.5f, -0.5f, -0.5f,         1.0f, 1.0f, 1.0f,      0.74f, 0.01f, // Punto R
+		   0.5f, -0.5f,  0.5f,         1.0f, 1.0f, 1.0f,      0.74f, 0.24f, // Punto P
+		  -0.5f, -0.5f,  0.5f,         1.0f, 1.0f, 1.0f,      0.51f, 0.24f, // Punto O
+
+		  -0.5f,  0.5f,  0.5f,         1.0f, 1.0f, 1.0f,      0.51f, 0.52f, // Punto C
+		   0.5f,  0.5f,  0.5f,         1.0f, 1.0f, 1.0f,      0.74f, 0.52f, // Punto F
+		   0.5f,  0.5f, -0.5f,         1.0f, 1.0f, 1.0f,      0.74f, 0.74f, // Punto E
+		  -0.5f,  0.5f, -0.5f,         1.0f, 1.0f, 1.0f,      0.51f, 0.75f  // Punto D
 	};
 
 	GLuint indices[] =
-	{  // Note that we start from 0!
-		0,1,3,
-		1,2,3
-	
+	{
+		0, 1, 2, 2, 3, 0,   // Frente
+		4, 5, 6, 6, 7, 4,   // Atrás
+		8, 9, 10, 10, 11, 8, // Derecha
+		12, 13, 14, 14, 15, 12, // Izquierda
+		16, 17, 18, 18, 19, 16, // Abajo
+		20, 21, 22, 22, 23, 20  // Arriba
 	};
 
 	// First, set the container's VAO (and VBO)
@@ -153,13 +179,13 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	// Diffuse map
-	image = stbi_load("images/window.png", &textureWidth, &textureHeight, &nrChannels,0);
+	image = stbi_load("images/dado.jpeg", &textureWidth, &textureHeight, &nrChannels,0);
 	glBindTexture(GL_TEXTURE_2D, texture1);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	if (image)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -208,7 +234,7 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		// Draw the light object (using light's vertex attributes)
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
 		// Swap the screen buffers
