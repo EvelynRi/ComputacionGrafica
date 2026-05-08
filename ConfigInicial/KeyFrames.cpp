@@ -1,5 +1,5 @@
-//Previo 12                             Perez Rivas Evelyn Samantha 
-//Fecha de entrega: 02/05/2026                           320258187
+//Practica 12                             Perez Rivas Evelyn Samantha 
+//Fecha de entrega: 08/05/2026                           320258187
 
 
 #include <iostream>
